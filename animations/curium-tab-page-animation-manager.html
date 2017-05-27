@@ -1,0 +1,81 @@
+<link rel="import" href="../../polymer/polymer-element.html">
+
+<link rel="import" href="../curium-animation-manager-mixin.html">
+
+<dom-module id="curium-tab-page-animation-manager">
+  <script>
+    /**
+     * `curium-tab-page-animation-manager`
+     * Tab page like animation
+     *
+     * @customElement
+     * @polymer
+     */
+    class CuriumTabPageAnimationManager extends Curium.CuriumAnimationManagerMixin(Polymer.Element) {
+
+      static get is() { return 'curium-tab-page-animation-manager'; }
+      
+      static get properties() {
+        return {
+          duration: {
+            type: Number,
+            value: 500
+          },
+          easing: {
+            type: String,
+            value: 'ease-in-out'
+          }
+        };
+      }
+
+      beforeAnimation(pageContainer, pageList, selectedPage, deselectedPage) {
+        let selectedIndex = pageList.indexOf(selectedPage);
+        let deselectedIndex = pageList.indexOf(deselectedPage);
+
+        let keyframeEffectList = [];
+
+        for (let i = 0, page; page = pageList[i]; ++i) {
+          if (i >= Math.min(selectedIndex, deselectedIndex) && i <= Math.max(selectedIndex, deselectedIndex)) {
+
+            let selectedOffset = i - selectedIndex;
+            let deselectedOffset = i - deselectedIndex;
+
+            this.setAnimating(pageContainer, page);
+            page.style.transform = `translateX(${deselectedOffset * 100}%)`;
+
+            keyframeEffectList.push(new KeyframeEffect(page, [
+              { transform: `translateX(${deselectedOffset * 100}%)` },
+              { transform: `translateX(${selectedOffset * 100}%)` }
+            ], this._getTiming({
+              duration: this.duration,
+              easing: this.easing
+            })));
+
+          } else {
+
+            this.unsetAnimating(pageContainer, page);
+
+          }
+        }
+
+        return keyframeEffectList.length > 0 ? new Animation(new GroupEffect(keyframeEffectList), document.timeline) : null;
+      }
+
+      afterAnimation(pageContainer, pageList, selectedPage, deselectedPage) {
+        let selectedIndex = pageList.indexOf(selectedPage);
+
+        for (let i = 0, page; page = pageList[i]; ++i) {
+          let selectedOffset = i - selectedIndex;
+
+          this.unsetAnimating(pageContainer, page);
+          page.style.transform = `translateX(${selectedOffset * 100}%)`;
+        }
+      }
+
+    }
+
+    window.customElements.define(CuriumTabPageAnimationManager.is, CuriumTabPageAnimationManager);
+    window.Curium = window.Curium || {};
+    Curium.CuriumTabPageAnimationManager = CuriumTabPageAnimationManager;
+  </script>
+</dom-module>

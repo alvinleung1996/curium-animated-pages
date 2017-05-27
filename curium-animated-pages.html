@@ -1,0 +1,163 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../polymer/lib/utils/debounce.html">
+<link rel="import" href="../polymer/lib/utils/async.html">
+
+<script src="../web-animations-js/web-animations-next-lite.min.js"></script>
+
+<link rel="import" href="../iron-selector/iron-selectable.html">
+<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html">
+
+<dom-module id="curium-animated-pages">
+  <template>
+    <style strip-whitespace>
+      :host {
+        display: block;
+        position: relative;
+        overflow: hidden;
+      }
+      :host > ::slotted(*) {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+      }
+      :host > ::slotted(:not(.iron-selected):not(.curium-animating)) {
+        display: none !important;
+      }
+      :host > ::slotted(.curium-animating) {
+        pointer-events: none;
+      }
+    </style>
+    <slot></slot>
+  </template>
+
+  <script>
+    /**
+     * `curium-animated-pages`
+     * A component similar to neon-animated-pages with greater flexibility
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class CuriumAnimatedPages extends Polymer.mixinBehaviors([Polymer.IronSelectableBehavior, Polymer.IronResizableBehavior], Polymer.Element) {
+
+      static get is() { return 'curium-animated-pages'; }
+
+      static get properties() {
+        return {
+          animationManager: {
+            type: String // or HTMLElement
+          },
+          animatingAttribute: {
+            type: String
+          },
+          animatingClass: {
+            type: String,
+            value: 'curium-animating'
+          },
+
+          activateEvent: {
+            type: String,
+            value: ''
+          },
+
+        };
+      }
+
+      ready() {
+        super.ready();
+        this.addEventListener('iron-select', e => this._onSelectionChanged(e));
+        this.addEventListener('iron-deselect', e => this._onSelectionChanged(e));
+        this.addEventListener('iron-items-changed', e => this._onSelectionChanged(e));
+      }
+
+      _onSelectionChanged(evt) {
+        this._onSelectionChanged_debJob = Polymer.Debouncer.debounce(this._onSelectionChanged_debJob, Polymer.Async.microTask, () => {
+          console.log(evt);
+
+          let pageList = this.items;
+
+          let deselectedPage = this._valueToItem(this._prevSelected) || null;
+          let selectedPage = this._valueToItem(this.selected) || null;
+
+          this._prevSelected = this.selected;
+
+          if (deselectedPage === selectedPage) {
+            return;
+          }
+
+          if (this._runningAnimation) {
+            // finish event handler will be triggered after the given animation duration
+            // no matter whether finish() has been called or not. (Bug?)
+            // So we have to manually call the finish callback otherwise the callback
+            // will be delayed.
+            this._runningAnimation.onfinish = null;
+            this._runningAnimation.finish();
+
+            this._animationFinishCallback();
+          }
+
+          let managerInstance;
+          if (typeof this.animationManager === 'string') {
+            managerInstance = this._getParentRoot().querySelector(this.animationManager);
+          } else if (this.animationManager instanceof HTMLElement) {
+            managerInstance = this.animationManager;
+          } else {
+            managerInstance = null;
+          }
+          
+          if (!managerInstance) {
+            return;
+          }
+
+          this._runningAnimation = managerInstance.beforeAnimation(this, pageList, selectedPage, deselectedPage);
+          this._animationFinishCallback = () => {
+            managerInstance.afterAnimation(this, pageList, selectedPage, deselectedPage);
+
+            this.resizerShouldNotify = el => el === selectedPage;
+            this.notifyResize();
+
+            this._runningAnimation = null;
+            this._animationFinishCallback = null;
+
+            this.dispatchEvent(new CustomEvent('curium-animation-finish', {
+              bubbles: false,
+              detail: {
+                pageContainer: this,
+                pageList: pageList,
+                selectedPage: selectedPage,
+                deselectedPage: deselectedPage
+              }
+            }));
+          };
+          if (this._runningAnimation) {
+            this._runningAnimation.onfinish = e => this._animationFinishCallback();
+            this._runningAnimation.play();
+          } else {
+            this._animationFinishCallback();
+          }
+
+        });
+      }
+
+      /**
+       * Query parent shadow root.
+       * Real parent of a shadow root is host instead of parentNode, so its parentNode === null
+       */
+      _getParentRoot() {
+        let node = this.parentNode;
+        while (node.parentNode) {
+          node = node.parentNode;
+        }
+        return node;
+      }
+
+    }
+
+    window.customElements.define(CuriumAnimatedPages.is, CuriumAnimatedPages);
+    window.Curium = window.Curium || {};
+    Curium.CuriumAnimatedPages = CuriumAnimatedPages;
+  </script>
+</dom-module>

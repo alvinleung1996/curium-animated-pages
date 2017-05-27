@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>curium-animated-pages test</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../curium-animated-pages.html">
+  </head>
+  <body>
+
+    <test-fixture id="BasicTestFixture">
+      <template>
+        <curium-animated-pages></curium-animated-pages>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="ChangedPropertyTestFixture">
+      <template>
+        <curium-animated-pages animation-manager="#manager-id" animating-attribute="animating-attr" animating-class="custom-animating-class"></curium-animated-pages>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite('curium-animated-pages', function() {
+
+        test('instantiating the element with default properties works', function() {
+          let element = fixture('BasicTestFixture');
+          assert.equal(element.animationManager, undefined);
+          assert.equal(element.animatingAttribute, undefined);
+          assert.equal(element.animatingClass, 'curium-animating');
+          assert.equal(element.activateEvent, '');
+        });
+
+        test('setting a property on the element works', function() {
+          var element = fixture('ChangedPropertyTestFixture');
+          assert.equal(element.animationManager, '#manager-id');
+          assert.equal(element.animatingAttribute, 'animating-attr');
+          assert.equal(element.animatingClass, 'custom-animating-class');
+          
+        });
+
+      });
+    </script>
+
+  </body>
+</html>

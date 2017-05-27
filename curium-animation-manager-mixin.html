@@ -1,0 +1,55 @@
+<link rel="import" href="../polymer/polymer-element.html">
+
+<!-- Alreay imported in curium-animated-pages.html -->
+<!--<script src="../web-animations-js/web-animations-next-lite.min.js"></script>-->
+<!-- Cannot re-import, otherwise some wire error will occur -->
+
+<script>
+  window.Curium = window.Curium || {};
+  Curium.CuriumAnimationManagerMixin = function(superClass) {
+    return class extends superClass {
+
+      beforeAnimation(pageContainer, pageList, selectedPage, deselectedPage) {
+        return null;
+      }
+
+      afterAnimation(pageContainer, pageList, selectedPage, deselectedPage) {
+
+      }
+
+      _getTiming(config) {
+        let timing = {};
+        ({
+          delay: timing.delay = 0,
+          direction: timing.direction = 'normal',
+          duration: timing.duration = 500,
+          easing: timing.easing = 'linear',
+          endDelay: timing.endDelay = 0,
+          fill: timing.fill = 'forwards',
+          iterationStart: timing.iterationStart = 0.0,
+          iterations: timing.iterations = 1
+        } = config);
+        return timing;
+      }
+
+      setAnimating(pageContainer, element) {
+        if (pageContainer.animatingAttribute && !element.hasAttribute(pageContainer.animatingAttribute)) {
+          element.setAttribute(pageContainer.animatingAttribute, "");
+        }
+        if (pageContainer.animatingClass && !element.classList.contains(pageContainer.animatingClass)) {
+          element.classList.add(pageContainer.animatingClass);
+        }
+      }
+
+      unsetAnimating(pageContainer, element) {
+        if (pageContainer.animatingAttribute && element.hasAttribute(pageContainer.animatingAttribute)) {
+          element.removeAttribute(pageContainer.animatingAttribute);
+        }
+        if (pageContainer.animatingClass && element.classList.contains(pageContainer.animatingClass)) {
+          element.classList.remove(pageContainer.animatingClass);
+        }
+      }
+
+    }
+  };
+</script>
