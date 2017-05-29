@@ -1,6 +1,5 @@
 <link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="../polymer/lib/utils/debounce.html">
-<link rel="import" href="../polymer/lib/utils/async.html">
 
 <script src="../web-animations-js/web-animations-next-lite.min.js"></script>
 
@@ -75,8 +74,7 @@
 
       _onSelectionChanged(evt) {
         this._onSelectionChanged_debJob = Polymer.Debouncer.debounce(this._onSelectionChanged_debJob, Polymer.Async.microTask, () => {
-          console.log(evt);
-
+          
           let pageList = this.items;
 
           let deselectedPage = this._valueToItem(this._prevSelected) || null;
@@ -116,11 +114,11 @@
           this._animationFinishCallback = () => {
             managerInstance.afterAnimation(this, pageList, selectedPage, deselectedPage);
 
-            this.resizerShouldNotify = el => el === selectedPage;
-            this.notifyResize();
-
             this._runningAnimation = null;
             this._animationFinishCallback = null;
+
+            this.resizerShouldNotify = el => el === selectedPage;
+            this.notifyResize();
 
             this.dispatchEvent(new CustomEvent('curium-animation-finish', {
               bubbles: false,
@@ -132,6 +130,16 @@
               }
             }));
           };
+
+          this.dispatchEvent(new CustomEvent('curium-animation-begin', {
+            bubbles: false,
+            detail: {
+              pageContainer: this,
+              pageList: pageList,
+              selectedPage: selectedPage,
+              deselectedPage: deselectedPage
+            }
+          }));
           if (this._runningAnimation) {
             this._runningAnimation.onfinish = e => this._animationFinishCallback();
             this._runningAnimation.play();
