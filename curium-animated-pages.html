@@ -15,11 +15,16 @@
         overflow: hidden;
       }
       :host > ::slotted(*) {
-        position: absolute;
-        top: 0px;
-        right: 0px;
-        bottom: 0px;
-        left: 0px;
+        /* !important is added for shadydom */
+        /* For native shadowdom, this selector will have higher priority than the :host selector.
+           For polyfill shadydom, the :host selector will have higher priority than this selector,
+           so these styles may be overridden by the host styles e.g. position: relative.
+           The current solution is to add !important to prevent styles from overridden. */
+        position: absolute !important;
+        top: 0px !important;
+        right: 0px !important;
+        bottom: 0px !important;
+        left: 0px !important;
       }
       :host > ::slotted(:not(.iron-selected):not(.curium-animating)) {
         display: none !important;
