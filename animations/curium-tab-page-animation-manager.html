@@ -28,47 +28,73 @@
     }
 
     beforeAnimation(pageContainer, pageList, selectedPage, deselectedPage) {
-      let selectedIndex = pageList.indexOf(selectedPage);
-      let deselectedIndex = pageList.indexOf(deselectedPage);
 
-      let keyframeEffectList = [];
+      if (selectedPage && !deselectedPage) {
 
-      for (let i = 0, page; page = pageList[i]; ++i) {
-        if (i >= Math.min(selectedIndex, deselectedIndex) && i <= Math.max(selectedIndex, deselectedIndex)) {
+        selectedPage.style.transform = 'translateX(0%)';
+        this.setAnimating(pageContainer, selectedPage);
+        return new Animation(new KeyframeEffect(selectedPage, [
+          { opacity: 0 },
+          { opacity: 1 }
+        ], this._getTiming({
+          duration: this.duration,
+          easing: this.easing
+        })), document.timeline);
 
-          let selectedOffset = i - selectedIndex;
-          let deselectedOffset = i - deselectedIndex;
+      } else if (!selectedPage && deselectedPage) {
 
-          this.setAnimating(pageContainer, page);
-          page.style.transform = `translateX(${deselectedOffset * 100}%)`;
+        deselectedPage.style.transform = 'translateX(0%)';
+        this.setAnimating(pageContainer, deselectedPage);
+        return new Animation(new KeyframeEffect(deselectedPage, [
+          { opacity: 1 },
+          { opacity: 0 }
+        ], this._getTiming({
+          duration: this.duration,
+          easing: this.easing
+        })), document.timeline);
 
-          keyframeEffectList.push(new KeyframeEffect(page, [
-            { transform: `translateX(${deselectedOffset * 100}%)` },
-            { transform: `translateX(${selectedOffset * 100}%)` }
-          ], this._getTiming({
-            duration: this.duration,
-            easing: this.easing
-          })));
+      } else {
 
-        } else {
+        let selectedIndex = pageList.indexOf(selectedPage);
+        let deselectedIndex = pageList.indexOf(deselectedPage);
 
-          this.unsetAnimating(pageContainer, page);
+        let keyframeEffectList = [];
 
+        for (let i = 0, page; page = pageList[i]; ++i) {
+          if (i >= Math.min(selectedIndex, deselectedIndex) && i <= Math.max(selectedIndex, deselectedIndex)) {
+
+            let selectedOffset = i - selectedIndex;
+            let deselectedOffset = i - deselectedIndex;
+
+            this.setAnimating(pageContainer, page);
+            page.style.transform = `translateX(${deselectedOffset * 100}%)`;
+
+            keyframeEffectList.push(new KeyframeEffect(page, [
+              { transform: `translateX(${deselectedOffset * 100}%)` },
+              { transform: `translateX(${selectedOffset * 100}%)` }
+            ], this._getTiming({
+              duration: this.duration,
+              easing: this.easing
+            })));
+
+          }
         }
-      }
 
-      return keyframeEffectList.length > 0 ? new Animation(new GroupEffect(keyframeEffectList), document.timeline) : null;
+        return keyframeEffectList.length > 0 ? new Animation(new GroupEffect(keyframeEffectList), document.timeline) : null;
+      }
     }
 
     afterAnimation(pageContainer, pageList, selectedPage, deselectedPage) {
-      let selectedIndex = pageList.indexOf(selectedPage);
 
-      for (let i = 0, page; page = pageList[i]; ++i) {
-        let selectedOffset = i - selectedIndex;
+        let selectedIndex = pageList.indexOf(selectedPage);
 
-        this.unsetAnimating(pageContainer, page);
-        page.style.transform = `translateX(${selectedOffset * 100}%)`;
-      }
+        for (let i = 0, page; page = pageList[i]; ++i) {
+          let selectedOffset = i - selectedIndex;
+
+          this.unsetAnimating(pageContainer, page);
+          page.style.transform = `translateX(${selectedOffset * 100}%)`;
+        }
+
     }
 
   }

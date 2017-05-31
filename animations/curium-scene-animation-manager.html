@@ -52,7 +52,7 @@
           deselectedPage.style.zOrder = 1;
           keyframeEffectList.push(new KeyframeEffect(deselectedPage, [
             { transform: 'scale(1.0, 1.0)', opacity: 1 },
-            { transform: 'scale(0.75, 0.75)', opacity: 0.5 }
+            { transform: 'scale(0.75, 0.75)', opacity: 0 }
           ], this._getTiming({
             duration: this.duration,
             easing: this.easing
@@ -64,7 +64,7 @@
         if (selectedPage) {
           selectedPage.style.zOrder = 1;
           keyframeEffectList.push(new KeyframeEffect(selectedPage, [
-            { transform: 'scale(0.75, 0.75)', opacity: 0.5 },
+            { transform: 'scale(0.75, 0.75)', opacity: 0 },
             { transform: 'scale(1.0, 1.0)', opacity: 1 }
           ], this._getTiming({
             duration: this.duration,
