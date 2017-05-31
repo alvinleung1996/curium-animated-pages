@@ -39,7 +39,7 @@
       if (selectedLevel >= deselectedLevel) {
 
         if (selectedPage) {
-          selectedPage.style.zOrder = 2;
+          selectedPage.style.zIndex = 2;
           keyframeEffectList.push(new KeyframeEffect(selectedPage, [
             { transform: 'scale(1.25, 1.25)', opacity: 0 },
             { transform: 'scale(1.0, 1.0)', opacity: 1 }
@@ -49,7 +49,7 @@
           })));
         }
         if (deselectedPage) {
-          deselectedPage.style.zOrder = 1;
+          deselectedPage.style.zIndex = 1;
           keyframeEffectList.push(new KeyframeEffect(deselectedPage, [
             { transform: 'scale(1.0, 1.0)', opacity: 1 },
             { transform: 'scale(0.75, 0.75)', opacity: 0 }
@@ -62,7 +62,7 @@
       } else {
 
         if (selectedPage) {
-          selectedPage.style.zOrder = 1;
+          selectedPage.style.zIndex = 1;
           keyframeEffectList.push(new KeyframeEffect(selectedPage, [
             { transform: 'scale(0.75, 0.75)', opacity: 0 },
             { transform: 'scale(1.0, 1.0)', opacity: 1 }
@@ -72,7 +72,7 @@
           })));
         }
         if (deselectedPage) {
-          deselectedPage.style.zOrder = 2;
+          deselectedPage.style.zIndex = 2;
           keyframeEffectList.push(new KeyframeEffect(deselectedPage, [
             { transform: 'scale(1.0, 1.0)', opacity: 1 },
             { transform: 'scale(1.25, 1.25)', opacity: 0 }
@@ -89,7 +89,7 @@
     afterAnimation(pageContainer, pageList, selectedPage, deselectedPage) {
       for (let i = 0, page; page = pageList[i]; ++i) {
         this.unsetAnimating(pageContainer, page);
-        page.style.zOrder = page === selectedPage ? 1 : 0;
+        page.style.zIndex = page === selectedPage ? 1 : 0;
       }
     }
 
