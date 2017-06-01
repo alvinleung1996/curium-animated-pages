@@ -12,6 +12,7 @@
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
     <link rel="import" href="../animations/curium-tab-page-animation-manager.html">
     <link rel="import" href="../animations/curium-scene-animation-manager.html">
+    <link rel="import" href="../animations/curium-slideshow-animation-manager.html">
     <link rel="import" href="../curium-animated-pages.html">
 
     <link rel="import" href="../../polymer/lib/elements/custom-style.html">
@@ -25,7 +26,7 @@
   </head>
   <body>
     <div class="vertical-section-container centered">
-      <h3>Basic curium-animated-pages demo</h3>
+      <h3>Tab Page curium-animated-pages demo</h3>
       <demo-snippet>
         <template>
           <custom-style>
@@ -47,8 +48,8 @@
               <input id="input-0" type="text" value="{{selectedPageID::change}}"></input>
               <curium-tab-page-animation-manager id="manager-0" duration="330"></curium-tab-page-animation-manager>
               <curium-animated-pages id="pages-0" selected="[[selectedPageID]]" animation-manager="#manager-0">
-                <div id="page-0"></div>
-                <div id="page-1"></div>
+                <div id="page-0">Page 0</div>
+                <div id="page-1">Page 1</div>
               </curium-animated-pages>
             </template>
             <script>
@@ -65,7 +66,7 @@
     </div>
 
     <div class="vertical-section-container centered">
-      <h3>Basic curium-animated-pages demo</h3>
+      <h3>Scene curium-animated-pages demo</h3>
       <demo-snippet>
         <template>
           <custom-style>
@@ -87,8 +88,8 @@
               <input id="input-1" type="text" value="{{selectedPageID::change}}"></input>
               <curium-scene-animation-manager id="manager-1" duration="330"></curium-scene-animation-manager>
               <curium-animated-pages id="pages-1" selected="[[selectedPageID]]" animation-manager="#manager-1">
-                <div id="page-0" level="0"></div>
-                <div id="page-1" level="1"></div>
+                <div id="page-0" level="0">Page 0</div>
+                <div id="page-1" level="1">Page 1</div>
               </curium-animated-pages>
             </template>
             <script>
@@ -97,6 +98,50 @@
                 // otherwise the pages may obtain an not-yet-upgraded manager
                 // which does not have the required methods.
                 document.querySelector("#bind-1").selectedPageID = 0;
+              });
+            </script>
+          </dom-bind>
+        </template>
+      </demo-snippet>
+    </div>
+
+    <div class="vertical-section-container centered">
+      <h3>Slideshow curium-animated-pages demo</h3>
+      <demo-snippet>
+        <template>
+          <custom-style>
+            <style>
+              #pages-2 {
+                width: 300px;
+                height: 300px;
+              }
+              #pages-2 #page-0 {
+                background-color: blue;
+              }
+              #pages-2 #page-1 {
+                background-color: red;
+              }
+            </style>
+          </custom-style>
+          <dom-bind id="bind-2">
+            <template>
+              <input id="input-2" type="text" value="{{selectedPageID::change}}"></input>
+              <curium-slideshow-animation-manager id="manager-2"></curium-slideshow-animation-manager>
+              <curium-animated-pages id="pages-2" selected="[[selectedPageID]]" animation-manager="#manager-2">
+                <div id="page-0" level="0">Page 0</div>
+                <div id="page-1" level="1">Page 1</div>
+              </curium-animated-pages>
+            </template>
+            <script>
+              document.querySelector("#bind-2").addEventListener('dom-change', () => {
+                // The pages should imported later than the manager,
+                // otherwise the pages may obtain an not-yet-upgraded manager
+                // which does not have the required methods.
+                let bind = document.querySelector("#bind-2");
+                bind.selectedPageID = 0;
+                setInterval(() => {
+                  bind.selectedPageID = (bind.selectedPageID + 1) % 2;
+                }, 2000);
               });
             </script>
           </dom-bind>

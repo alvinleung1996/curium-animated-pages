@@ -32,7 +32,7 @@
       if (selectedPage && !deselectedPage) {
 
         selectedPage.style.transform = 'translateX(0%)';
-        this.setAnimating(pageContainer, selectedPage);
+        this._setAnimating(pageContainer, selectedPage);
         return new Animation(new KeyframeEffect(selectedPage, [
           { opacity: 0 },
           { opacity: 1 }
@@ -44,7 +44,7 @@
       } else if (!selectedPage && deselectedPage) {
 
         deselectedPage.style.transform = 'translateX(0%)';
-        this.setAnimating(pageContainer, deselectedPage);
+        this._setAnimating(pageContainer, deselectedPage);
         return new Animation(new KeyframeEffect(deselectedPage, [
           { opacity: 1 },
           { opacity: 0 }
@@ -66,7 +66,7 @@
             let selectedOffset = i - selectedIndex;
             let deselectedOffset = i - deselectedIndex;
 
-            this.setAnimating(pageContainer, page);
+            this._setAnimating(pageContainer, page);
             page.style.transform = `translateX(${deselectedOffset * 100}%)`;
 
             keyframeEffectList.push(new KeyframeEffect(page, [
@@ -91,7 +91,7 @@
         for (let i = 0, page; page = pageList[i]; ++i) {
           let selectedOffset = i - selectedIndex;
 
-          this.unsetAnimating(pageContainer, page);
+          this._unsetAnimating(pageContainer, page);
           page.style.transform = `translateX(${selectedOffset * 100}%)`;
         }
 

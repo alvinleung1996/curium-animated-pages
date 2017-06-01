@@ -31,8 +31,8 @@
       let selectedLevel = this._getPageLevel(selectedPage);
       let deselectedLevel = this._getPageLevel(deselectedPage);
 
-      if (selectedPage) this.setAnimating(pageContainer, selectedPage);
-      if (deselectedPage) this.setAnimating(pageContainer, deselectedPage);
+      if (selectedPage) this._setAnimating(pageContainer, selectedPage);
+      if (deselectedPage) this._setAnimating(pageContainer, deselectedPage);
 
       let keyframeEffectList = [];
 
@@ -88,7 +88,7 @@
 
     afterAnimation(pageContainer, pageList, selectedPage, deselectedPage) {
       for (let i = 0, page; page = pageList[i]; ++i) {
-        this.unsetAnimating(pageContainer, page);
+        this._unsetAnimating(pageContainer, page);
         page.style.zIndex = page === selectedPage ? 1 : 0;
       }
     }

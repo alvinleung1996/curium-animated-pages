@@ -32,7 +32,7 @@
         return timing;
       }
 
-      setAnimating(pageContainer, element) {
+      _setAnimating(pageContainer, element) {
         if (pageContainer.animatingAttribute && !element.hasAttribute(pageContainer.animatingAttribute)) {
           element.setAttribute(pageContainer.animatingAttribute, "");
         }
@@ -41,7 +41,7 @@
         }
       }
 
-      unsetAnimating(pageContainer, element) {
+      _unsetAnimating(pageContainer, element) {
         if (pageContainer.animatingAttribute && element.hasAttribute(pageContainer.animatingAttribute)) {
           element.removeAttribute(pageContainer.animatingAttribute);
         }
