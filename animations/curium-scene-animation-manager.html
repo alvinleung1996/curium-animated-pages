@@ -94,12 +94,14 @@
     }
 
     _getPageLevel(page) {
+      /* IE does not have Number.parseInt and Number.isInteger */
       let level = NaN;
       if (page && page.hasAttribute('level')) {
         let levelStr = page.getAttribute('level');
-        level = Number.parseInt(levelStr);
+        level = Number.parseInt ? Number.parseInt(levelStr) : window.parseInt(levelStr);
       }
-      return Number.isInteger(level) ? level : 0;
+      return (Number.isInteger ? Number.isInteger(level) : (typeof level === 'number' && window.isFinite(level) && Math.floor(level) === level)) ?
+             level : 0;
     }
 
   }

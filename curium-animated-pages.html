@@ -72,9 +72,13 @@
 
       ready() {
         super.ready();
-        this.addEventListener('iron-select', e => this._onSelectionChanged(e));
-        this.addEventListener('iron-deselect', e => this._onSelectionChanged(e));
-        this.addEventListener('iron-items-changed', e => this._onSelectionChanged(e));
+        this.addEventListener('iron-select', e => {
+          if (e.target === this) this._onSelectionChanged(e)
+        });
+        this.addEventListener('iron-deselect', e => {
+          if (e.target === this) this._onSelectionChanged(e)
+        });
+        this.addEventListener('iron-items-changed', e => this._onSelectionChanged(e)); // iron-items-changed is non-bubbling
       }
 
       _onSelectionChanged(evt) {
@@ -160,11 +164,12 @@
        * Real parent of a shadow root is host instead of parentNode, so its parentNode === null
        */
       _getParentRoot() {
-        let node = this.parentNode;
-        while (node.parentNode) {
-          node = node.parentNode;
-        }
-        return node;
+        // let node = this.parentNode;
+        // while (node.parentNode) {
+        //   node = node.parentNode;
+        // }
+        // return node;
+        return this.getRootNode();
       }
 
     }

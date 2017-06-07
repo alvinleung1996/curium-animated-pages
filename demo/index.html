@@ -29,6 +29,16 @@
       <h3>Tab Page curium-animated-pages demo</h3>
       <demo-snippet>
         <template>
+          <script>
+            // dom-change event for dom-bind is synchronous in Polymer 2.0: https://github.com/Polymer/polymer/issues/4605,
+            // so the listener should be added before parsing dom-bind element.
+            document.body.addEventListener('dom-change', function(e) {
+              // The pages should imported later than the manager,
+              // otherwise the pages may obtain an not-yet-upgraded manager
+              // which does not have the required methods.
+              if (e.target.id === 'bind-0') e.target.selectedPageID = 0;
+            });
+          </script>
           <custom-style>
             <style>
               #pages-0 {
@@ -45,21 +55,13 @@
           </custom-style>
           <dom-bind id="bind-0">
             <template>
-              <input id="input-0" type="text" value="{{selectedPageID::change}}"></input>
+              <input id="input-0" type="text" value="{{selectedPageID::input}}"></input>
               <curium-tab-page-animation-manager id="manager-0" duration="330"></curium-tab-page-animation-manager>
               <curium-animated-pages id="pages-0" selected="[[selectedPageID]]" animation-manager="#manager-0">
                 <div id="page-0">Page 0</div>
                 <div id="page-1">Page 1</div>
               </curium-animated-pages>
             </template>
-            <script>
-              document.querySelector("#bind-0").addEventListener('dom-change', () => {
-                // The pages should imported later than the manager,
-                // otherwise the pages may obtain an not-yet-upgraded manager
-                // which does not have the required methods.
-                document.querySelector("#bind-0").selectedPageID = 0;
-              });
-            </script>
           </dom-bind>
         </template>
       </demo-snippet>
@@ -69,6 +71,11 @@
       <h3>Scene curium-animated-pages demo</h3>
       <demo-snippet>
         <template>
+          <script>
+            document.body.addEventListener('dom-change', function(e) {
+              if (e.target.id === 'bind-1') e.target.selectedPageID = 0;
+            });
+          </script>
           <custom-style>
             <style>
               #pages-1 {
@@ -85,21 +92,13 @@
           </custom-style>
           <dom-bind id="bind-1">
             <template>
-              <input id="input-1" type="text" value="{{selectedPageID::change}}"></input>
+              <input id="input-1" type="text" value="{{selectedPageID::input}}"></input>
               <curium-scene-animation-manager id="manager-1" duration="330"></curium-scene-animation-manager>
               <curium-animated-pages id="pages-1" selected="[[selectedPageID]]" animation-manager="#manager-1">
                 <div id="page-0" level="0">Page 0</div>
                 <div id="page-1" level="1">Page 1</div>
               </curium-animated-pages>
             </template>
-            <script>
-              document.querySelector("#bind-1").addEventListener('dom-change', () => {
-                // The pages should imported later than the manager,
-                // otherwise the pages may obtain an not-yet-upgraded manager
-                // which does not have the required methods.
-                document.querySelector("#bind-1").selectedPageID = 0;
-              });
-            </script>
           </dom-bind>
         </template>
       </demo-snippet>
@@ -109,6 +108,19 @@
       <h3>Slideshow curium-animated-pages demo</h3>
       <demo-snippet>
         <template>
+          <script>
+            document.body.addEventListener('dom-change', function(e) {
+              if (e.target.id === 'bind-2') {
+                let bind = e.target;
+                bind.selectedPageID = 0;
+                setInterval(function() {
+                  // Cannot call e.target getter here or it will throw an error.
+                  // Instead save the result of e.target getter in 'bind' before.
+                  bind.selectedPageID = (bind.selectedPageID + 1) % 2;
+                }, 2000);
+              }
+            });
+          </script>
           <custom-style>
             <style>
               #pages-2 {
@@ -125,25 +137,13 @@
           </custom-style>
           <dom-bind id="bind-2">
             <template>
-              <input id="input-2" type="text" value="{{selectedPageID::change}}"></input>
+              <input id="input-2" type="text" value="{{selectedPageID::input}}"></input>
               <curium-slideshow-animation-manager id="manager-2"></curium-slideshow-animation-manager>
               <curium-animated-pages id="pages-2" selected="[[selectedPageID]]" animation-manager="#manager-2">
                 <div id="page-0" level="0">Page 0</div>
                 <div id="page-1" level="1">Page 1</div>
               </curium-animated-pages>
             </template>
-            <script>
-              document.querySelector("#bind-2").addEventListener('dom-change', () => {
-                // The pages should imported later than the manager,
-                // otherwise the pages may obtain an not-yet-upgraded manager
-                // which does not have the required methods.
-                let bind = document.querySelector("#bind-2");
-                bind.selectedPageID = 0;
-                setInterval(() => {
-                  bind.selectedPageID = (bind.selectedPageID + 1) % 2;
-                }, 2000);
-              });
-            </script>
           </dom-bind>
         </template>
       </demo-snippet>
