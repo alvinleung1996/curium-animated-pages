@@ -51,6 +51,12 @@
               #pages-0 #page-1 {
                 background-color: red;
               }
+              #pages-0 #page-2 {
+                background-color: green;
+              }
+              #pages-0 #page-3 {
+                background-color: purple;
+              }
             </style>
           </custom-style>
           <dom-bind id="bind-0">
@@ -60,6 +66,58 @@
               <curium-animated-pages id="pages-0" selected="[[selectedPageID]]" animation-manager="#manager-0">
                 <div id="page-0">Page 0</div>
                 <div id="page-1">Page 1</div>
+                <div id="page-2">Page 2</div>
+                <div id="page-3">Page 3</div>
+              </curium-animated-pages>
+            </template>
+          </dom-bind>
+        </template>
+      </demo-snippet>
+    </div>
+    
+    <div class="vertical-section-container centered">
+      <h3>Tab Page curium-animated-pages demo (no intermediate page)</h3>
+      <demo-snippet>
+        <template>
+          <script>
+            // dom-change event for dom-bind is synchronous in Polymer 2.0: https://github.com/Polymer/polymer/issues/4605,
+            // so the listener should be added before parsing dom-bind element.
+            document.body.addEventListener('dom-change', function(e) {
+              // The pages should imported later than the manager,
+              // otherwise the pages may obtain an not-yet-upgraded manager
+              // which does not have the required methods.
+              if (e.target.id === 'bind-3') e.target.selectedPageID = 0;
+            });
+          </script>
+          <custom-style>
+            <style>
+              #pages-3 {
+                width: 300px;
+                height: 300px;
+              }
+              #pages-3 #page-0 {
+                background-color: blue;
+              }
+              #pages-3 #page-1 {
+                background-color: red;
+              }
+              #pages-3 #page-2 {
+                background-color: green;
+              }
+              #pages-3 #page-3 {
+                background-color: purple;
+              }
+            </style>
+          </custom-style>
+          <dom-bind id="bind-3">
+            <template>
+              <input id="input-3" type="text" value="{{selectedPageID::input}}"></input>
+              <curium-tab-page-animation-manager id="manager-3" duration="330" no-intermediate-page></curium-tab-page-animation-manager>
+              <curium-animated-pages id="pages-3" selected="[[selectedPageID]]" animation-manager="#manager-3">
+                <div id="page-0">Page 0</div>
+                <div id="page-1">Page 1</div>
+                <div id="page-2">Page 2</div>
+                <div id="page-3">Page 3</div>
               </curium-animated-pages>
             </template>
           </dom-bind>
@@ -88,6 +146,12 @@
               #pages-1 #page-1 {
                 background-color: red;
               }
+              #pages-1 #page-2 {
+                background-color: green;
+              }
+              #pages-1 #page-3 {
+                background-color: purple;
+              }
             </style>
           </custom-style>
           <dom-bind id="bind-1">
@@ -97,6 +161,8 @@
               <curium-animated-pages id="pages-1" selected="[[selectedPageID]]" animation-manager="#manager-1">
                 <div id="page-0" level="0">Page 0</div>
                 <div id="page-1" level="1">Page 1</div>
+                <div id="page-2" level="1">Page 2</div>
+                <div id="page-3" level="2">Page 3</div>
               </curium-animated-pages>
             </template>
           </dom-bind>
@@ -116,7 +182,7 @@
                 setInterval(function() {
                   // Cannot call e.target getter here or it will throw an error.
                   // Instead save the result of e.target getter in 'bind' before.
-                  bind.selectedPageID = (bind.selectedPageID + 1) % 2;
+                  bind.selectedPageID = (bind.selectedPageID + 1) % 4;
                 }, 2000);
               }
             });
@@ -133,6 +199,12 @@
               #pages-2 #page-1 {
                 background-color: red;
               }
+              #pages-2 #page-2 {
+                background-color: green;
+              }
+              #pages-2 #page-3 {
+                background-color: purple;
+              }
             </style>
           </custom-style>
           <dom-bind id="bind-2">
@@ -140,8 +212,10 @@
               <input id="input-2" type="text" value="{{selectedPageID::input}}"></input>
               <curium-slideshow-animation-manager id="manager-2"></curium-slideshow-animation-manager>
               <curium-animated-pages id="pages-2" selected="[[selectedPageID]]" animation-manager="#manager-2">
-                <div id="page-0" level="0">Page 0</div>
-                <div id="page-1" level="1">Page 1</div>
+                <div id="page-0">Page 0</div>
+                <div id="page-1">Page 1</div>
+                <div id="page-2">Page 2</div>
+                <div id="page-3">Page 3</div>
               </curium-animated-pages>
             </template>
           </dom-bind>

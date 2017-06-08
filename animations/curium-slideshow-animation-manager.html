@@ -32,36 +32,31 @@
       let keyframeEffectList = [];
       
       if (selectedPage) {
-        this._setAnimating(pageContainer, selectedPage);
         selectedPage.style.zIndex = 2;
+        this._setAnimating(pageContainer, selectedPage);
         keyframeEffectList.push(new KeyframeEffect(selectedPage, [
           { opacity: 0 },
           { opacity: 1 }
-        ], this._getTiming({
-          duration: this.duration,
-          easing: this.easing
-        })));
+        ], this._getTiming()));
       }
       if (deselectedPage) {
-        this._setAnimating(pageContainer, deselectedPage);
         deselectedPage.style.zIndex = 1;
-        // keyframeEffectList.push(new KeyframeEffect(deselectedPage, [
-        //   { opacity: 1 },
-        //   { opacity: 0 }
-        // ], this._getTiming({
-        //   duration: this.duration,
-        //   easing: this.easing
-        // })));
+        this._setAnimating(pageContainer, deselectedPage);
+        if (!selectedPage) {
+          keyframeEffectList.push(new KeyframeEffect(deselectedPage, [
+            { opacity: 1 },
+            { opacity: 0 }
+          ], this._getTiming()));
+        }
       }
 
-      let effect;
-      switch (keyframeEffectList.length) {
-        case 1: effect = keyframeEffectList[0]; break;
-        case 2: effect = new GroupEffect(keyframeEffectList); break;
-        default: effect = null;
+      if (keyframeEffectList.length === 1) {
+        return new Animation(keyframeEffectList[0], document.timeline);
+      } else if (keyframeEffectList.length > 1) {
+        return new Animation(new GroupEffect(keyframeEffectList), document.timeline);
+      } else {
+        return null;
       }
-
-      return effect ? new Animation(effect, document.timeline) : null;
     }
 
     afterAnimation(pageContainer, pageList, selectedPage, deselectedPage) {
@@ -69,6 +64,14 @@
         this._unsetAnimating(pageContainer, page);
         page.style.zIndex = page === selectedPage ? 1 : 0;
       }
+    }
+
+    _getTiming() {
+      return super._getTiming({
+        duration: this.duration,
+        easing: this.easing,
+        fill: 'forwards'
+      });
     }
 
   }
