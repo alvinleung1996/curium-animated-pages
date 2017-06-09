@@ -62,6 +62,11 @@
             value: 'curium-animating'
           },
 
+          notifyResizeOnGrandchildren: {
+            type: Boolean,
+            value: false
+          },
+
           activateEvent: {
             type: String,
             value: ''
@@ -126,7 +131,17 @@
             this._runningAnimation = null;
             this._animationFinishCallback = null;
 
-            this.resizerShouldNotify = el => el === selectedPage;
+            this.resizerShouldNotify = el => {
+              if (this.notifyResizeOnGrandchildren) {
+                let node = el;
+                while (node !== selectedPage && node !== this) {
+                  node = el.parentNode;
+                }
+                return node === selectedPage;
+              } else {
+                return el === selectedPage;
+              }
+            };
             this.notifyResize();
 
             this.dispatchEvent(new CustomEvent('curium-animation-finish', {
