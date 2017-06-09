@@ -135,7 +135,7 @@
               if (this.notifyResizeOnGrandchildren) {
                 let node = el;
                 while (node !== selectedPage && node !== this) {
-                  node = el.parentNode;
+                  node = node.assignedSlot || node.parentNode || node.host;
                 }
                 return node === selectedPage;
               } else {
