@@ -1,7 +1,7 @@
 <link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="../polymer/lib/utils/debounce.html">
 
-<script src="../web-animations-js/web-animations-next-lite.min.js"></script>
+<link rel="import" href="../../bower_components/web-animations-js/web-animations-next-lite.min.html">
 
 <link rel="import" href="../iron-selector/iron-selectable.html">
 <link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html">
@@ -119,14 +119,10 @@
           } else {
             managerInstance = null;
           }
-          
-          if (!managerInstance) {
-            return;
-          }
 
-          this._runningAnimation = managerInstance.beforeAnimation(this, pageList, selectedPage, deselectedPage);
-          this._animationFinishCallback = () => {
-            managerInstance.afterAnimation(this, pageList, selectedPage, deselectedPage);
+          let runningAnimation = managerInstance ? managerInstance.beforeAnimation(this, pageList, selectedPage, deselectedPage) : null;
+          let animationFinishCallback = () => {
+            if (managerInstance) managerInstance.afterAnimation(this, pageList, selectedPage, deselectedPage);
 
             this._runningAnimation = null;
             this._animationFinishCallback = null;
@@ -164,6 +160,8 @@
               deselectedPage: deselectedPage
             }
           }));
+          this._runningAnimation = runningAnimation;
+          this._animationFinishCallback = animationFinishCallback;
           if (this._runningAnimation) {
             this._runningAnimation.onfinish = e => this._animationFinishCallback();
             this._runningAnimation.play();
